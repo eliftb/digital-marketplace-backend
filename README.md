@@ -1,120 +1,193 @@
 # Digital Marketplace Backend
 
-Backend API for a **local producer marketplace platform** where farmers, artisans and homemade product sellers can sell directly to consumers.
+A **Spring Boot based marketplace backend** where local producers (farmers, artisans, homemade product sellers) can sell products directly to consumers.
 
-The project is built with **Spring Boot 3**, implements **JWT based authentication**, **role-based authorization**, and supports a complete **e-commerce workflow including products, orders, payments, reviews and admin management**.
+This project demonstrates a **multi-role e-commerce backend architecture** including authentication, product management, order processing, payments, reviews, and administrative reporting.
 
 ---
 
-# Project Overview
+# Architecture
 
-This platform enables a **multi-role marketplace system** with separate capabilities for administrators, producers, and consumers.
+The backend follows a **layered architecture** to keep the system modular and maintainable.
 
-Typical flow:
+Client applications interact with REST controllers, which delegate business logic to services and persistence to repositories.
 
-Consumer → Browse products → Place order → Payment → Producer fulfills order → Review system
+```
+Client (Web / Mobile)
+        │
+        ▼
+REST Controllers
+        │
+        ▼
+Service Layer
+(Business Logic)
+        │
+        ▼
+Repository Layer
+(Spring Data JPA)
+        │
+        ▼
+PostgreSQL Database
+```
+
+Security is handled through **Spring Security with JWT authentication**.
 
 ---
 
 # Tech Stack
 
-| Layer              | Technology                  |
-| ------------------ | --------------------------- |
-| Backend Framework  | Spring Boot 3               |
-| Language           | Java 17                     |
-| Security           | Spring Security + JWT       |
-| Database           | PostgreSQL                  |
-| ORM                | Spring Data JPA (Hibernate) |
-| Database Migration | Flyway                      |
-| API Documentation  | Swagger / OpenAPI           |
-| Build Tool         | Maven                       |
-| Containerization   | Docker                      |
+| Layer             | Technology                  |
+| ----------------- | --------------------------- |
+| Backend Framework | Spring Boot 3               |
+| Language          | Java 17                     |
+| Security          | Spring Security + JWT       |
+| Database          | PostgreSQL                  |
+| ORM               | Spring Data JPA (Hibernate) |
+| Migration         | Flyway                      |
+| API Documentation | Swagger / OpenAPI           |
+| Build Tool        | Maven                       |
+| Containerization  | Docker                      |
 
 ---
 
-# Key Features
+# Core Features
 
-### Authentication & Security
+## Authentication & Security
 
-* JWT authentication
+* JWT based authentication
 * Refresh token mechanism
 * Password reset via email
 * Role based authorization
 
-### Marketplace System
+## Marketplace System
 
 * Product management
-* Category system
-* Product images
+* Category hierarchy
 * Product search and filtering
+* Product image support
 
-### Order Management
+## Order Management
 
-* Create orders
+* Order creation
 * Order status workflow
 * Producer order dashboard
 * Order cancellation
 
-### Payment System
+## Payment System
 
 * Payment processing
-* Refund capability
 * Payment tracking
+* Refund functionality
 
-### Review System
+## Reviews & Ratings
 
 * Product reviews
-* Review moderation by admin
+* Admin moderation system
 
-### Favorites
+## Favorites
 
-* Users can favorite products
+* Save favorite products
 * Favorite status check
 
-### Producer Management
+## Producer System
 
-* Producer application system
-* Admin approval/rejection
+* Producer registration request
+* Admin approval / rejection
 * Commission configuration
 
-### Reporting System
+## Reporting System
 
 * Sales reports
 * Commission reports
 * Top selling products
 * Producer performance reports
 
-### Admin Panel
+## Admin Panel
 
 * Dashboard statistics
 * User management
 * Producer management
-* Platform settings
+* Platform configuration
 
 ---
 
 # User Roles
 
-| Role        | Description                             |
-| ----------- | --------------------------------------- |
-| SUPER_ADMIN | Full system control and configuration   |
-| ADMIN       | Platform moderation and user management |
-| PRODUCER    | Store management and product selling    |
-| CONSUMER    | Product browsing and purchasing         |
+| Role        | Description                                    |
+| ----------- | ---------------------------------------------- |
+| SUPER_ADMIN | Full system control and platform configuration |
+| ADMIN       | User and producer management                   |
+| PRODUCER    | Store management and order tracking            |
+| CONSUMER    | Product browsing and purchasing                |
+
+---
+
+# Database ER Diagram (Conceptual)
+
+```
+Users
+ ├── ProducerProfiles
+ ├── ConsumerProfiles
+ ├── Addresses
+
+Products
+ ├── ProductImages
+ ├── Reviews
+ ├── Favorites
+
+Orders
+ ├── OrderItems
+ ├── Payments
+
+Categories
+ └── Products
+
+Cities
+ └── Districts
+```
+
+Main tables:
+
+```
+users
+producer_profiles
+consumer_profiles
+products
+product_images
+categories
+orders
+order_items
+payments
+reviews
+favorites
+commission_transactions
+platform_settings
+password_reset_tokens
+refresh_tokens
+cities
+districts
+addresses
+```
 
 ---
 
 # API Documentation
 
-After running the application:
+After starting the application:
 
 Swagger UI
+
+```
 http://localhost:8080/api/swagger-ui.html
+```
 
 OpenAPI JSON
-http://localhost:8080/api/api-docs
 
-Swagger provides full interactive documentation for all endpoints.
+```
+http://localhost:8080/api/api-docs
+```
+
+Swagger provides interactive documentation for all API endpoints.
 
 ---
 
@@ -152,9 +225,9 @@ export MAIL_PASSWORD=your_app_password
 
 ---
 
-## 3 Run the Application
+## 3 Run Application
 
-```bash
+```
 mvn clean install
 mvn spring-boot:run
 ```
@@ -163,7 +236,7 @@ mvn spring-boot:run
 
 # Run With Docker
 
-```bash
+```
 docker-compose up -d
 ```
 
@@ -174,42 +247,17 @@ docker-compose up -d
 ```
 src/main/java/com/pazaryeri
 
-config/         Security & OpenAPI configuration  
-controller/     REST Controllers  
-dto/            Request and response models  
-entity/         JPA entities  
-enums/          Application enums  
-exception/      Global exception handling  
-repository/     Spring Data repositories  
-security/       JWT authentication logic  
-service/        Business logic layer  
+config/         Security & OpenAPI configuration
+controller/     REST controllers
+dto/            Request / response models
+entity/         JPA entities
+enums/          Application enums
+exception/      Global exception handling
+repository/     Spring Data repositories
+security/       JWT authentication logic
+service/        Business logic layer
 service/impl/   Service implementations
 ```
-
----
-
-# Database Overview
-
-Main tables used in the system:
-
-users
-producer_profiles
-consumer_profiles
-products
-product_images
-categories
-orders
-order_items
-payments
-reviews
-favorites
-commission_transactions
-platform_settings
-password_reset_tokens
-refresh_tokens
-cities
-districts
-addresses
 
 ---
 
@@ -220,7 +268,7 @@ Email: admin@pazaryeri.com
 Password: Admin123!
 ```
 
-Change these credentials before using in production.
+Change these credentials before production use.
 
 ---
 
@@ -230,16 +278,16 @@ Change these credentials before using in production.
 
 ## Dijital Pazar Yeri Backend
 
-Bu proje, **yerel üreticilerin (çiftçiler, zanaatkarlar, ev yapımı ürün satıcıları)** ürünlerini doğrudan tüketicilere satabilecekleri bir **dijital pazar yeri platformunun backend API'sidir.**
+Bu proje, **yerel üreticilerin (çiftçiler, zanaatkarlar, ev yapımı ürün satıcıları)** ürünlerini doğrudan tüketicilere satabildiği bir **dijital pazar yeri platformunun backend API'sidir.**
 
-Sistem aşağıdaki ana özellikleri içerir:
+Spring Boot kullanılarak geliştirilmiş olup aşağıdaki sistemleri içerir:
 
-* JWT tabanlı kimlik doğrulama
+* JWT kimlik doğrulama
 * Rol bazlı yetkilendirme
-* Ürün ve kategori yönetimi
+* Ürün yönetimi
 * Sipariş sistemi
 * Ödeme sistemi
-* Yorum ve değerlendirme sistemi
+* Yorum sistemi
 * Favori ürünler
 * Admin paneli
 * Raporlama sistemi
@@ -253,7 +301,7 @@ Sistem aşağıdaki ana özellikleri içerir:
 | SUPER_ADMIN | Platform ayarları ve tam sistem kontrolü |
 | ADMIN       | Kullanıcı ve üretici yönetimi            |
 | PRODUCER    | Ürün ekleme ve sipariş yönetimi          |
-| CONSUMER    | Ürün görüntüleme ve sipariş verme        |
+| CONSUMER    | Ürün arama ve sipariş verme              |
 
 ---
 
@@ -262,7 +310,7 @@ Sistem aşağıdaki ana özellikleri içerir:
 ### Gereksinimler
 
 * Java 17+
-* Maven 3.8+
+* Maven
 * PostgreSQL
 
 ---
@@ -277,7 +325,7 @@ CREATE DATABASE pazaryeri_db;
 
 ### Uygulamayı çalıştırma
 
-```bash
+```
 mvn clean install
 mvn spring-boot:run
 ```
@@ -286,7 +334,7 @@ mvn spring-boot:run
 
 ### Docker ile çalıştırma
 
-```bash
+```
 docker-compose up -d
 ```
 
@@ -294,6 +342,8 @@ docker-compose up -d
 
 ## API Dokümantasyonu
 
-Uygulama çalıştıktan sonra Swagger arayüzüne şu adresten ulaşabilirsiniz:
+Swagger arayüzüne şu adresten erişilebilir:
 
+```
 http://localhost:8080/api/swagger-ui.html
+```
