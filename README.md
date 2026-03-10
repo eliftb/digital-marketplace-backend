@@ -191,6 +191,12 @@ Swagger provides interactive documentation for all API endpoints.
 
 ---
 
+## API Preview
+
+Swagger UI Interface
+
+![Swagger UI](docs/swagger-ui.png)
+
 # Installation
 
 ## Requirements
