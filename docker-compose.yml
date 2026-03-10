@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Veritabanı
+  postgres:
+    image: postgres:15-alpine
+    container_name: pazaryeri-postgres
+    environment:
+      POSTGRES_DB: pazaryeri_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - pazaryeri-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Spring Boot Backend
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pazaryeri-backend
+    environment:
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres123
+      JWT_SECRET: 3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/pazaryeri_db
+      MAIL_HOST: smtp.gmail.com
+      MAIL_PORT: 587
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,http://localhost:5173}
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - pazaryeri-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  pazaryeri-network:
+    driver: bridge
